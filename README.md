@@ -22,10 +22,9 @@ The blog entries are sorted and duplicates removed.
 
 At this point the titles are printed out and the number of entries. This may seem unexciting but it is a step on the path to world dominating reblogination. 
 
+## Skip to the End ##
+If the idea sounds good but this implementation seems, well, unfinished, there is another, already existing solution:
 
+[Backfeed](http://backfeed.strangecode.com/) bills itself as the Wayback Machine for podcast feeds. It is only through the author Quinn Comendant's comments on StackOverflow that I thought of usinig the Wayback machine myself.
 
-
-
-
-
-A tool to read a blog from the start
+I do intend to continue development on my script because mine will be open so you can run it on your own server instead of getting an access key from Quinn and filling up his server.
