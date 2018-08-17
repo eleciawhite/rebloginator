@@ -1,11 +1,14 @@
+#!/usr/bin/env python
 import feedparser
 import urllib
 import json
 import os
 import glob
-import  dateutil.parser
+import dateutil.parser
 import datetime
-import pytz
+import pytz #python timeezones
+
+import PyRSS2Gen
 
 TESTING_FIXED_CAPS = True # debug only! less wayback traffic
 
@@ -34,6 +37,11 @@ def getCompleteBlogPosts(rssLines):
         thisfeed = feedparser.parse(url)
         feed.extend(thisfeed["items"]) # combine RSS items list 
 
+    # also get the latest posts
+    thisfeed = feedparser.parse(rssLines[1][ENDURL])
+    feed.extend(thisfeed["items"])
+    
+    #sort and remove duplicates
     sortedEntries = sorted(feed, key=lambda entry: dateutil.parser.parse(entry["published"]))
     sortedParedEntries = []
     for i in range(0,len(sortedEntries)-1):  
@@ -88,7 +96,8 @@ def writeStatus(feedname, status):
     json.dump(status, statusFile)
     statusFile.close()
 
-def readStatus(feedname):
+def readStatus(cfg):
+    feedname = cfg["feedName"]
     statusFilename = os.path.join(TMP_OUTPUT_PATH, (feedname + ".json"))
     if os.path.isfile(statusFilename):
         statusFile = open(statusFilename, 'r')
@@ -98,7 +107,7 @@ def readStatus(feedname):
         print("Creating status file: " + statusFilename)
         status ={}
         status["lastRepost"] = TIME_ZERO 
-        status["publishDateLastRepost"] = TIME_ZERO 
+        status["publishDateLastRepost"] = cfg["startDate"]
         status["RSSCached"] = False
         status["RSSCacheDate"] = TIME_ZERO 
         status["RSSCacheFile"] = cfg["feedName"] + ".rss"
@@ -131,30 +140,61 @@ def getTheRss(cfg, status):
     cacheFile.close()
     return feed
 
-# test running the data
-for cfgFilename in glob.glob(os.path.join(CONFIG_PATH, '*.json')):
-    with open(cfgFilename, 'r') as cfgFile:
-        print("Reading " + cfgFilename)
-        cfg = json.loads(cfgFile.read())
-        status = readStatus(cfg["feedName"])
-        lastRepost = dateutil.parser.parse(status["lastRepost"])
-        goalPostTime = lastRepost + datetime.timedelta(hours = cfg["updateFrequencyInHours"])
-        now = datetime.datetime.now(datetime.timezone.utc)
-        if goalPostTime < now:
-            feed = getTheRss(cfg, status)    
-            post = postAfter(feed, status["publishDateLastRepost"])
-            if post is not None:
-                status["lastRepost"] = datetime.datetime.now(datetime.timezone.utc).__str__()
-                status["publishDateLastRepost"] = post["published"]
-                printTitles([post])
-            else: # no more posts, next time get a new cache
-                lastCacheDate = dateutil.parser.parse(status["RSSCacheDate"])
-                goalCacheDate = lastCacheDate + datetime.timedelta(days = CACHE_FREQUENCY_DAYS)
-                print("No more posts...")
-                if (goalCacheDate < now):
-                    print("Clearing cache for next time.")
-                    status["RSSCached"] = False
-            writeStatus(cfg["feedName"], status)
-        else:
-            print("Not time for this to post.")
+# no more posts, next time get a new cache
+def checkCacheReload(status):
+    lastCacheDate = dateutil.parser.parse(status["RSSCacheDate"])
+    goalCacheDate = lastCacheDate + datetime.timedelta(days = CACHE_FREQUENCY_DAYS)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    if (goalCacheDate < now):
+        print("Clearing cache for next time.")
+        status["RSSCached"] = False
+    return status
 
+
+def outputItems(cfg, outputFilename, item):
+    # Modify the parsed_feed data here
+    print(item.keys())
+    rss = PyRSS2Gen.RSS2(
+        title = cfg["feedName"],
+        link = cfg["url"],
+        description = 'Rebloginator re-blog!',
+        items = [],
+    )
+
+    rss.items.append(PyRSS2Gen.RSSItem(
+            title = item["title"],
+            link = item["link"],
+            description = item["summary"],
+            guid = item["link"],
+            pubDate =  dateutil.parser.parse(item["published"])
+            ))
+
+    outFilenameWithPath = os.path.join(RSS_OUTPUT_PATH, outputFilename)
+    outFile = open(outFilenameWithPath, 'w+')
+    rss.write_xml(outFile)
+    outFile.close()
+
+if __name__ == "__main__":
+    # test running the data
+    for cfgFilename in glob.glob(os.path.join(CONFIG_PATH, '*.json')):
+        with open(cfgFilename, 'r') as cfgFile:
+            print("Reading " + cfgFilename)
+            cfg = json.loads(cfgFile.read())
+            status = readStatus(cfg)
+            lastRepost = dateutil.parser.parse(status["lastRepost"])
+            goalPostTime = lastRepost + datetime.timedelta(hours = cfg["updateFrequencyInHours"])
+            now = datetime.datetime.now(datetime.timezone.utc)
+            if goalPostTime < now:
+                feed = getTheRss(cfg, status)    
+                post = postAfter(feed, status["publishDateLastRepost"])
+                if post is not None:
+                    status["lastRepost"] = datetime.datetime.now(datetime.timezone.utc).__str__()
+                    status["publishDateLastRepost"] = post["published"]
+                    printTitles([post])
+                    outputItem(cfg, status["RSSCacheFile"], post)
+                else: 
+                    print("No more posts...")
+                    status = checkCacheReload(status)
+                writeStatus(cfg["feedName"], status)
+            else:
+                print("Not time for this to post.")
