@@ -10,8 +10,6 @@ import pytz #python timeezones
 
 import PyRSS2Gen
 
-TESTING_FIXED_CAPS = True # debug only! less wayback traffic
-
 CONFIG_PATH = "cfg"
 RSS_OUTPUT_PATH = "rss"
 TMP_OUTPUT_PATH = "tmp"
@@ -53,15 +51,8 @@ def getCompleteBlogPosts(rssLines):
 # use the wayback machine to look up old revisions of the rss file, ideally getting 
 # all or most posts by combining together wayback snapshots (momentos)
 def getListOfRssLine(inputURL):
-    if not TESTING_FIXED_CAPS:
-        response = urllib.request.urlopen(waybackJsonURL+inputURL)
-        waybackListOfRSSCaptures = response.read()
-    else:
-        waybackListOfRSSCaptures = '[["urlkey","timestamp","original","mimetype","statuscode","digest","redirect","robotflags","length","offset","filename"], \
-        ["fm,embedded)/blog?format=rss","20160303172611","http://embedded.fm:80/blog?format=RSS","application/rss+xml","200","HPD2LGQOXB5T77EW32HEKHQRTOUTBB2Y","-","-","47809","89047138","alexa20160304-26/52_51_20160303172437_crawl302.arc.gz"],\
-        ["fm,embedded)/blog?format=rss","20160415235438","http://embedded.fm:80/blog/?format=rss","application/rss+xml","200","GSFAOIDOGLP345JAQSV7CIJCARO3VPZ6","-","-","62374","82777796","alexa20160416-35/52_51_20160415235357_crawl302.arc.gz"],\
-        ["fm,embedded)/blog?format=rss","20160503203836","http://embedded.fm:80/blog?format=RSS","application/rss+xml","200","YKSCQC45AVIS6RX2S7NUXOLYBB34MWS3","-","-","64458","59772429","alexa20160504-31/52_52_20160503203812_crawl302.arc.gz"], \
-        ["fm,embedded)/blog?format=rss","20160527112148","http://embedded.fm/blog?format=RSS","application/rss+xml","200","RUH424UU6G6AYYTZOQ4E3Y3ZTBKRNO6B","-","-","58979","239852212","WIDE-20160527111127-crawl426/WIDE-20160527111341-00139.warc.gz"]]'
+    response = urllib.request.urlopen(waybackJsonURL+inputURL)
+    waybackListOfRSSCaptures = response.read()
     return waybackListOfRSSCaptures
 
 # get a complete list of entries in the blog from an input URL of the RSS 
