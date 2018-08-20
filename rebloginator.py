@@ -1,14 +1,19 @@
-#!/usr/bin/env python
+
+# You'll likely need to pip3 install these
 import feedparser
+import PyRSS2Gen
+import dateutil.parser # pip3 install python-dateutil
+import pytz #python timezones
+
+# These are standard and should not need additional installs
 import urllib
 import json
 import os
 import glob
-import dateutil.parser
 import datetime
-import pytz #python timeezones
 
-import PyRSS2Gen
+
+print "Content-type: text/html\n\n" # dreamhose to allow outputs
 
 CONFIG_PATH = "cfg"
 RSS_OUTPUT_PATH = "rss"
@@ -142,7 +147,7 @@ def checkCacheReload(status):
     return status
 
 
-def outputItems(cfg, outputFilename, item):
+def outputItem(cfg, outputFilename, item):
     # Modify the parsed_feed data here
     print(item.keys())
     rss = PyRSS2Gen.RSS2(

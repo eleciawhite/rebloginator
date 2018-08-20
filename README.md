@@ -1,5 +1,5 @@
 # rebloginator
-The rebloginator (re-blog-inator) is a tool to read a blog from the start instead of only the last 20 posts or instead of digging through someone's website one laborious Older buttong press at a time.
+The rebloginator (re-blog-inator) is a tool to read a blog from the start instead of only the last 20 posts or instead of digging through someone's website one laborious Older button press at a time.
 
 The idea is that you put in a blog RSS URL that you want to read, a date you want to start reading from, and how often you want new posts. Rebloginator will then generate a new RSS feed you can subscribe to that will be update with the parameters you specify.
 
@@ -18,9 +18,9 @@ Nowhere near the goal.
 
 Given a target blog URL, the script will query the Wayback Machine, getting a JSON file of all of the captures of the blog URL. The script will then query each of those to get a list of blog entries. 
 
-The blog entries are sorted and duplicates removed.
+The blog entries are sorted and duplicates removed. The correct new-post is chosen.
 
-At this point the titles are printed out and the number of entries. This may seem unexciting but it is a step on the path to world dominating reblogination. 
+Essentially, it could go on a server and work. Except it only posts one item at a time and a new post kills the previous item. It needs to read in the generated-rss and add an item instead of always overwriting the output. Also, it only posts the teaser and link instead of the whole post but that is straightforward to change.
 
 ## Skip to the End ##
 If the idea sounds good but this implementation seems, well, unfinished, there is another, already existing solution:
