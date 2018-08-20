@@ -22,6 +22,14 @@ The blog entries are sorted and duplicates removed. The correct new-post is chos
 
 Essentially, it could go on a server and work. Except it only posts one item at a time and a new post kills the previous item. It needs to read in the generated-rss and add an item instead of always overwriting the output. Also, it only posts the teaser and link instead of the whole post but that is straightforward to change.
 
+## Installing on a Server ##
+
+Find a nice server that you have access to, this could be a Raspberry Pi or AWS. For me, it is going to be Dreamhost. I found [an explantion of setting up a server that help me get over the initial fear and hurdles]9https://gist.github.com/moonmilk/8d78032debd16f31a8a9). It boiled down to a few fairly simple steps. Install [python3](https://help.dreamhost.com/hc/en-us/articles/115000702772-Installing-a-custom-version-of-Python-3), possibly create a [virtual environment](https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-virtualenv-using-Python-3). Next, you'll need to install a few libraries:
+
+pip3 install feedparser PyRSS2Gen python-dateutil timezones
+
+From there, you should be able to run on the server, at least enough to get an output you can try with your feed reader (or an [online one](http://www.feedbucket.com/)). Next, you'll want to set up a cron job to run rebloginator regularly.
+
 ## Skip to the End ##
 If the idea sounds good but this implementation seems, well, unfinished, there is another, already existing solution:
 

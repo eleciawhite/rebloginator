@@ -12,8 +12,7 @@ import os
 import glob
 import datetime
 
-
-print "Content-type: text/html\n\n" # dreamhose to allow outputs
+print("Content-type: text/html\n\n") # dreamhost to allow outputs
 
 CONFIG_PATH = "cfg"
 RSS_OUTPUT_PATH = "rss"
@@ -149,7 +148,6 @@ def checkCacheReload(status):
 
 def outputItem(cfg, outputFilename, item):
     # Modify the parsed_feed data here
-    print(item.keys())
     rss = PyRSS2Gen.RSS2(
         title = cfg["feedName"],
         link = cfg["url"],
@@ -160,7 +158,7 @@ def outputItem(cfg, outputFilename, item):
     rss.items.append(PyRSS2Gen.RSSItem(
             title = item["title"],
             link = item["link"],
-            description = item["summary"],
+            description = bytes(item["summary"], encoding='utf-8').decode(),
             guid = item["link"],
             pubDate =  dateutil.parser.parse(item["published"])
             ))
