@@ -12,6 +12,8 @@ import os
 import glob
 import datetime
 
+import re
+
 print("Content-type: text/html\n\n") # dreamhost to allow outputs
 
 CONFIG_PATH = "cfg"
@@ -158,7 +160,8 @@ def outputItem(cfg, outputFilename, item):
     rss.items.append(PyRSS2Gen.RSSItem(
             title = item["title"],
             link = item["link"],
-            description = bytes(item["summary"], encoding='utf-8').decode(),
+#            description = bytes(item["summary"], encoding='utf-8').decode(),
+            description = re.sub(u'[\u2019\u201c\u201d]','\'',item["summary"]),
             guid = item["link"],
             pubDate =  dateutil.parser.parse(item["published"])
             ))
