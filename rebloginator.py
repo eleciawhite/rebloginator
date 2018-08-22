@@ -149,18 +149,42 @@ def checkCacheReload(status):
 
 
 def outputItem(cfg, outputFilename, item):
-    # Modify the parsed_feed data here
-    rss = PyRSS2Gen.RSS2(
-        title = cfg["feedName"],
-        link = cfg["url"],
-        description = 'Rebloginator re-blog!',
-        items = [],
-    )
+    outFilenameWithPath = os.path.join(RSS_OUTPUT_PATH, outputFilename)
+    if os.path.isfile(outFilenameWithPath):
+        outputFile = open(outFilenameWithPath, 'r')
+        d = feedparser.parse(outputFile.read())
+        outputFile.close()
+        
+        items = [PyRSS2Gen.RSSItem( 
+                title = x.title, 
+                link = x.link, 
+                description = x.summary, 
+                guid = x.link, 
+                pubDate = dateutil.parser.parse(item["published"]))    
+        for x in d.entries]
+        if (len(items) > cfg["keepEntries"]):
+            items.pop()
 
-    rss.items.append(PyRSS2Gen.RSSItem(
+        rss = PyRSS2Gen.RSS2( 
+            title = d.feed.title, 
+            link = d.feed.link, 
+            description = d.feed.description, 
+            lastBuildDate = datetime.datetime.now(), 
+            items = items) 
+
+    else:
+        print("Creating output file: " + outFilenameWithPath)
+        rss = PyRSS2Gen.RSS2(
+            title = cfg["feedName"],
+            link = cfg["url"],
+            description = 'Rebloginator re-blog!',
+            items = []
+        )
+
+    # now up to keepEntries entriess
+    rss.items.insert(0, PyRSS2Gen.RSSItem(
             title = item["title"],
             link = item["link"],
-#            description = bytes(item["summary"], encoding='utf-8').decode(),
             description = re.sub(u'[\u2019\u201c\u201d]','\'',item["summary"]),
             guid = item["link"],
             pubDate =  dateutil.parser.parse(item["published"])

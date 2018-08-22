@@ -1,0 +1,7 @@
+{
+    "feedName": "Joel Spolsky",
+    "url": "https://www.joelonsoftware.com/feed/",
+    "startDate": "1 July 1900 0:0:0 +0000",
+    "updateFrequencyInHours" : 48,
+    "keepEntries" : 10
+}

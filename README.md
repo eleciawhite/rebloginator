@@ -14,17 +14,20 @@ Anyway, blogs are meant to be read from now forward, no backsies. Defeating this
 While I believe I can use magicTime on Squarespace, I want a more generic utility, even if it means missing a few posts. I'm using the internet archive Wayback Machine to read the top level RSS feed as it is captured.
 
 ## Current status ##
-Nowhere near the goal.
+Near the goal, limited testing.
 
 Given a target blog URL, the script will query the Wayback Machine, getting a JSON file of all of the captures of the blog URL. The script will then query each of those to get a list of blog entries. 
 
-The blog entries are sorted and duplicates removed. The correct new-post is chosen.
+The blog entries are sorted and duplicates removed. The correct new-post is chosen. A certain number are kept in the output RSS file before they expire.
 
-Essentially, it could go on a server and work. Except it only posts one item at a time and a new post kills the previous item. It needs to read in the generated-rss and add an item instead of always overwriting the output. Also, it only posts the teaser and link instead of the whole post but that is straightforward to change.
+Essentially, it is time for the cron job and some other test blogs.
+
+## Fails ##
+This does not work on [False Knees](http://falseknees.com/334.html).
 
 ## Installing on a Server ##
 
-Find a nice server that you have access to, this could be a Raspberry Pi or AWS. For me, it is going to be Dreamhost. I found [an explantion of setting up a server that help me get over the initial fear and hurdles]9https://gist.github.com/moonmilk/8d78032debd16f31a8a9). It boiled down to a few fairly simple steps. Install [python3](https://help.dreamhost.com/hc/en-us/articles/115000702772-Installing-a-custom-version-of-Python-3), possibly create a [virtual environment](https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-virtualenv-using-Python-3). Next, you'll need to install a few libraries:
+Find a nice server that you have access to, this could be a Raspberry Pi or AWS. For me, it is going to be Dreamhost. I found [an explantion of setting up a server that help me get over the initial fear and hurdles]https://gist.github.com/moonmilk/8d78032debd16f31a8a9). It boiled down to a few fairly simple steps. Install [python3](https://help.dreamhost.com/hc/en-us/articles/115000702772-Installing-a-custom-version-of-Python-3), possibly create a [virtual environment](https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-virtualenv-using-Python-3). Next, you'll need to install a few libraries:
 
 pip3 install feedparser PyRSS2Gen python-dateutil timezones
 

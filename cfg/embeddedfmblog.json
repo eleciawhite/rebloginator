@@ -2,5 +2,6 @@
     "feedName": "embeddedBlogFrom13Aug",
     "url": "https://www.embedded.fm/blog/?format=rss",
     "startDate": "1 July 2000 0:0:0 +0000",
-    "updateFrequencyInHours" : 4
+    "updateFrequencyInHours" : 4,
+    "keepEntries" : 3
 }
