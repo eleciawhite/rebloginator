@@ -18,16 +18,18 @@ Near the goal, limited testing.
 
 Given a target blog URL, the script will query the Wayback Machine, getting a JSON file of all of the captures of the blog URL. The script will then query each of those to get a list of blog entries. 
 
-The blog entries are sorted and duplicates removed. The correct new-post is chosen. A certain number are kept in the output RSS file before they expire.
+The blog entries are sorted and duplicates removed. The correct new-post is chosen. A certain number are kept in the output RSS file before they expire. A number of blogs are available as [reblog feeds](http://logicalelegance.com/apps/rebloginator/rss/), some with more success than others.
 
 Essentially, it is time for the cron job and some other test blogs.
 
 ## Fails ##
-This does not work on [False Knees](http://falseknees.com/334.html).
+This does not work on [False Knees](http://falseknees.com) as that doesn't have an RSS feed that is also on Wayback. Also, [Universe Today](https://www.universetoday.com/feed) seems too large for reading in to RAM before sorting and outputing. A better script method would likely fix that.
+
+Some blogs (such as Joel on Software) have changed RSS feeds which means the blog starts part way through. Others (such as Embedded Artistry and Saturday Morning Breakfast Cereal) start part way through for no discernable reason and need additional debugging.
 
 ## Installing on a Server ##
 
-Find a nice server that you have access to, this could be a Raspberry Pi or AWS. For me, it is going to be Dreamhost. I found [an explantion of setting up a server that help me get over the initial fear and hurdles]https://gist.github.com/moonmilk/8d78032debd16f31a8a9). It boiled down to a few fairly simple steps. Install [python3](https://help.dreamhost.com/hc/en-us/articles/115000702772-Installing-a-custom-version-of-Python-3), possibly create a [virtual environment](https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-virtualenv-using-Python-3). Next, you'll need to install a few libraries:
+Find a nice server that you have access to, this could be a Raspberry Pi or AWS. For me, it is going to be Dreamhost. I found [an explanation of setting up a server that help me get over the initial fear and hurdles](https://gist.github.com/moonmilk/8d78032debd16f31a8a9). It boiled down to a few fairly simple steps. Install [python3](https://help.dreamhost.com/hc/en-us/articles/115000702772-Installing-a-custom-version-of-Python-3), possibly create a [virtual environment](https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-virtualenv-using-Python-3). Next, you'll need to install a few libraries:
 
 pip3 install feedparser PyRSS2Gen python-dateutil timezones
 
