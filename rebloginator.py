@@ -81,10 +81,8 @@ def postAfter(feed, dateStr):
 # debug: print all of the titles that are in the feed along with a count
 # of how many there are
 def printTitles(feed):
-    count = 0
     for entry in feed:
-        print(entry["published"] + " " + bytes(entry['title'], encoding='utf-8').decode()) 
-        count = count + 1
+        print(entry["published"] + " " + re.sub(u'[\u2019\u201c\u201d]','\'',item["title"])) 
 
 def writeStatus(feedname, status):
     statusFilename = os.path.join(TMP_OUTPUT_PATH, (feedname + ".json"))
@@ -181,7 +179,7 @@ def outputItem(cfg, outputFilename, item):
 
     # now up to keepEntries entriess
     rss.items.insert(0, PyRSS2Gen.RSSItem(
-            title = item["title"],
+            title = re.sub(u'[\u2019\u201c\u201d]','\'',item["title"]),
             link = item["link"],
             description = re.sub(u'[\u2019\u201c\u201d]','\'',item["summary"]),
             guid = item["link"],
