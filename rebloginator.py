@@ -82,7 +82,7 @@ def postAfter(feed, dateStr):
 # of how many there are
 def printTitles(feed):
     for entry in feed:
-        print(entry["published"] + " " + re.sub(u'[\u2019\u201c\u201d]','\'',item["title"])) 
+        print(entry["published"] + " " + makeHappyAscii(entry["title"])) 
 
 def writeStatus(feedname, status):
     statusFilename = os.path.join(TMP_OUTPUT_PATH, (feedname + ".json"))
@@ -144,6 +144,14 @@ def checkCacheReload(status):
         status["RSSCached"] = False
     return status
 
+# Unicode is a pain and blogs can be anything but the server wants everything in ascii
+# so this function replaces curly quotes with single quotes and then moves to ascii,
+# ignoring unicode characters.
+def makeHappyAscii(str):
+    singleQuotesRemoved = re.sub(u'[\u2019]','\'',str)
+    doubleQuotesRemoved = re.sub(u'[\u201c\u201d]','\"',singleQuotesRemoved)
+    reEncoded = bytes(doubleQuotesRemoved, encoding='utf-8').decode("ascii", "ignore") 
+    return reEncoded
 
 def outputItem(cfg, outputFilename, item):
     outFilenameWithPath = os.path.join(RSS_OUTPUT_PATH, outputFilename)
@@ -159,7 +167,7 @@ def outputItem(cfg, outputFilename, item):
                 guid = x.link, 
                 pubDate = dateutil.parser.parse(item["published"]))    
         for x in d.entries]
-        if (len(items) > cfg["keepEntries"]):
+        if (len(items) > cfg["keepEntries"]): # only keep a limited number of entries
             items.pop()
 
         rss = PyRSS2Gen.RSS2( 
@@ -177,11 +185,10 @@ def outputItem(cfg, outputFilename, item):
             items = []
         )
 
-    # now up to keepEntries entriess
     rss.items.insert(0, PyRSS2Gen.RSSItem(
-            title = re.sub(u'[\u2019\u201c\u201d]','\'',item["title"]),
+            title = makeHappyAscii(item["title"]),
             link = item["link"],
-            description = re.sub(u'[\u2019\u201c\u201d]','\'',item["summary"]),
+            description = makeHappyAscii(item["summary"]),
             guid = item["link"],
             pubDate =  dateutil.parser.parse(item["published"])
             ))
