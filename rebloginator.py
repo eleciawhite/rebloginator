@@ -83,9 +83,8 @@ def postAfter(feed, dateStr):
 def printTitles(feed):
     count = 0
     for entry in feed:
-        print(entry["published"] + " " + entry['title']) 
+        print(entry["published"] + " " + bytes(entry['title'], encoding='utf-8').decode()) 
         count = count + 1
-    print(count)
 
 def writeStatus(feedname, status):
     statusFilename = os.path.join(TMP_OUTPUT_PATH, (feedname + ".json"))
@@ -171,7 +170,6 @@ def outputItem(cfg, outputFilename, item):
             description = d.feed.description, 
             lastBuildDate = datetime.datetime.now(), 
             items = items) 
-
     else:
         print("Creating output file: " + outFilenameWithPath)
         rss = PyRSS2Gen.RSS2(
