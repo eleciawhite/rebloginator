@@ -16,10 +16,12 @@ import re
 
 print("Content-type: text/html\n\n") # dreamhost to allow outputs
 
+# output paths, all relative to script
 CONFIG_PATH = "cfg"
 RSS_OUTPUT_PATH = "rss"
 TMP_OUTPUT_PATH = "tmp"
 
+# access the Internet Archive
 waybackJsonURL = 'http://web.archive.org/web/timemap/json/'
 waybackWebURL = 'http://web.archive.org/web/'
 TIME = 1    # where time is in the Wayback output
@@ -84,12 +86,15 @@ def printTitles(feed):
     for entry in feed:
         print(entry["published"] + " " + makeHappyAscii(entry["title"])) 
 
+# output the current status of the blog: where are we and when did we last post
 def writeStatus(feedname, status):
     statusFilename = os.path.join(TMP_OUTPUT_PATH, (feedname + ".json"))
     statusFile = open(statusFilename, 'w+')
     json.dump(status, statusFile)
     statusFile.close()
 
+# read in the current status of the blog to determine if it is time to reblog
+# This will also create a new status file if one does not exist
 def readStatus(cfg):
     feedname = cfg["feedName"]
     statusFilename = os.path.join(TMP_OUTPUT_PATH, (feedname + ".json"))
@@ -107,7 +112,9 @@ def readStatus(cfg):
         status["RSSCacheFile"] = cfg["feedName"] + ".rss"
         writeStatus(feedname, status)
     return status
-        
+
+# Read the RSS from a local cache. If the local cache does not exist, create it
+# (which could take a lot of time)        
 def getTheRss(cfg, status):
     haveGoodCache = False
     feedname = cfg["feedName"]
@@ -153,6 +160,10 @@ def makeHappyAscii(str):
     reEncoded = bytes(doubleQuotesRemoved, encoding='utf-8').decode("ascii", "ignore") 
     return reEncoded
 
+# Output the new blog entry. This prepends it to the current RSS output. 
+# To do that it has to read in the previous RSS entries and 
+# outputting as many as the configuration file indicates. Note, if there
+# are no previous entries, it will generate a new RSS.
 def outputItem(cfg, outputFilename, item):
     outFilenameWithPath = os.path.join(RSS_OUTPUT_PATH, outputFilename)
     if os.path.isfile(outFilenameWithPath):
@@ -198,6 +209,8 @@ def outputItem(cfg, outputFilename, item):
     rss.write_xml(outFile)
     outFile.close()
 
+# This is the start of it all, looking through the config files in the CONFIG_PATH
+# Reading the related status and posting if it is time.
 if __name__ == "__main__":
     # test running the data
     for cfgFilename in glob.glob(os.path.join(CONFIG_PATH, '*.json')):

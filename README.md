@@ -16,7 +16,7 @@ While I believe I can use magicTime on Squarespace, I want a more generic utilit
 ## Current status ##
 Near the goal, limited testing.
 
-Given a target blog URL, the script will query the Wayback Machine, getting a JSON file of all of the captures of the blog URL. The script will then query each of those to get a list of blog entries. 
+Given a target blog URL, the script will query the [Wayback Machine](http://web.archive.org/web/), getting a JSON file of all of the captures of the blog URL. The script will then query each of those to get a list of blog entries. 
 
 The blog entries are sorted and duplicates removed. The correct new-post is chosen. A certain number are kept in the output RSS file before they expire. A number of blogs are available as [reblog feeds](http://logicalelegance.com/apps/rebloginator/rss/), some with more success than others.
 
